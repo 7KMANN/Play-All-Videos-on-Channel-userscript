@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         All vids playlist
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
+// @version      1.0.3
 // @description  Create all videos playlist, accessible from channel page
 // @author       7KMANN
 // @match        https://www.youtube.com/*
