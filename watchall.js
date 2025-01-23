@@ -8,6 +8,8 @@
 // @license      MIT
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTMgMTBIMTRWMTJIM1YxME0zIDZIMTRWOEgzVjZNMyAxNEgxMFYxNkgzVjE0TTE2IDEzVjIxTDIyIDE3TDE2IDEzWiIgLz48L3N2Zz4=
 // @grant        none
+// @downloadURL https://update.greasyfork.org/scripts/496909/All%20vids%20playlist.user.js
+// @updateURL https://update.greasyfork.org/scripts/496909/All%20vids%20playlist.meta.js
 // ==/UserScript==
 
 let buttonexists = false;
@@ -61,48 +63,43 @@ function replaceAt(index, replacement, string) {
     return string.substr(0, index) + replacement + string.substr(index + replacement.length);
 }
 
-function addplusbutton(){
+function addplusbutton() {
     //console.log("Function Started")
     let chipsElement = document.querySelector('#chips yt-chip-cloud-chip-renderer[chip-style="STYLE_DEFAULT"]').parentNode;
-    //console.log(chipsElement)
-    for (let i = 0; i < chipsElement.length; i++) {
-        // Check the 'chip-style' attribute of the first child
-        //console.log(chipsElement[i])
-        if (chipsElement[i].firstElementChild.getAttribute('chip-style') === 'STYLE_DEFAULT') {
-            chipsElement = chipsElement[i];
-            //console.log("IF WORKED:",chipsElement.firstElementChild.getAttribute('chip-style'))
-        } else {
-            //console.log("WRONG ATTRIBUTE:",chipsElement[i].firstElementChild.getAttribute('chip-style'))
-        }
-    }
-    //console.log(chipsElement)
+
     let childElements = chipsElement.children;
+    let buttonOriginal;
     for (let i = 0; i < childElements.length; i++) {
         if (!childElements[i].classList.contains('iron-selected')) {
-            //console.log(childElements[i])
-            buttonOriginal = childElements[i]
+            buttonOriginal = childElements[i];
         }
     }
-   
+
     let clonedButton = buttonOriginal.cloneNode(true);
     chipsElement.appendChild(clonedButton);
     clonedButton.removeAttribute('is-empty');
-    clonedButton.setAttribute('title', 'Play every videos in channel');
+    clonedButton.setAttribute('title', 'Play every video in channel');
     clonedButton.setAttribute('id', 'mybutton');
-    clonedButton.innerHTML = "Play all";
+
+    // Use TrustedTypes for setting innerHTML if available
+    if (window.trustedTypes) {
+        let policy = trustedTypes.createPolicy('default', {
+            createHTML: (string) => string
+        });
+        clonedButton.innerHTML = policy.createHTML("Play all");
+    } else {
+        // Fallback if TrustedTypes is not supported
+        clonedButton.innerHTML = "Play all";
+    }
+
     clonedButton.style.color = 'red';
     clonedButton.style.fontWeight = 'bolder';
     clonedButton.addEventListener('click', playallclicked);
-    //console.log("Button added")
-    //console.log(clonedButton)
 
     buttonexists = true;
     observer2.disconnect();
-    //console.log("Observer 2 disconnected because button added")  
-    //console.log("Observer state: ", observer.takeRecords().length == 0 ? "not observing" : "observing");
-    //console.log("Observer2 state: ", observer2.takeRecords().length == 0 ? "not observing" : "observing");
-
 }
+
 
 
 let observer2 = new MutationObserver(waitsforbutton);
